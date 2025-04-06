@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRX Method | Chrome Extensions</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <div class="logo">Extensions</div>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/tos">Tos</a></li>
+                <li><a href="/aboutsite">About Site</a></li>
+                <li><a href="/aboutowner">About Owner</a></li>
+                <li><a href="/crxmethod" class="active">CRX Method</a></li>
+                <li><a href="/showcase">Showcase</a></li>
+                <li><a href="/linkleap">Link Leap</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <header class="progress-header">
+        <div class="container">
+            <h1>CRX Method</h1>
+            <p>Download and validate Chrome extensions</p>
+        </div>
+    </header>
+    
+    <section class="content-section">
+        <div class="floating-stars" id="stars"></div>
+        <div class="container">
+            <div class="crx-box">
+                <h2>Get Your Extension</h2>
+                
+                <div class="input-container">
+                    <input type="text" id="crxInput" placeholder="Enter chrome url or id">
+                </div>
+                
+                <div class="buttons-container">
+                    <button id="downloadBtn" class="primary-btn">Download Extension</button>
+                    <button id="validateBtn" class="secondary-btn">Detect If Its Valid</button>
+                </div>
+                
+                <div class="scan-container" id="scanContainer">
+                    <div class="scan-animation">
+                        <div class="scan-line"></div>
+                    </div>
+                    <div class="scan-result" id="scanResult"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p>© 2025 <span>Useful Chrome Extensions</span>. Made by Smart Script Studios.</p>
+        </div>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>
