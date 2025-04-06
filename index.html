@@ -562,7 +562,6 @@
                 }
             });
             
-            // Reset display if search is empty
             if (searchTerm === '') {
                 documents.forEach(doc => {
                     doc.style.display = 'block';
@@ -570,7 +569,7 @@
             }
         });
         
-        // Back to top button
+       
         const backToTopButton = document.getElementById('backToTop');
         
         window.addEventListener('scroll', () => {
