@@ -3,63 +3,588 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRX Method | Chrome Extensions</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Indexfolio - Document Repository</title>
+    <style>
+        :root {
+            --navy: #1A365D;
+            --teal: #2A9D8F;
+            --light-gray: #F7F7F7;
+            --charcoal: #333333;
+            --white: #FFFFFF;
+            --orange: #F4A261;
+            --light-blue: #A8DADC;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-gray);
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: var(--navy);
+            color: var(--white);
+            padding: 20px 0;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo span {
+            color: var(--teal);
+        }
+        
+        .search-container {
+            flex-grow: 1;
+            max-width: 600px;
+            margin: 0 20px;
+            position: relative;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: none;
+            background-color: var(--white);
+            font-size: 16px;
+            color: var(--charcoal);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .search-bar:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.3);
+        }
+        
+        .search-shortcut {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--light-blue);
+            color: var(--navy);
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--teal);
+        }
+        
+        main {
+            padding: 40px 0;
+        }
+        
+        .hero {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 36px;
+            color: var(--navy);
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            color: var(--charcoal);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .doc-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        
+        .doc-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .doc-header {
+            background-color: var(--teal);
+            color: var(--white);
+            padding: 20px;
+        }
+        
+        .doc-title {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .doc-type {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .doc-content {
+            padding: 20px;
+            flex-grow: 1;
+        }
+        
+        .doc-footer {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--charcoal);
+        }
+        
+        .doc-tag {
+            background-color: var(--light-blue);
+            color: var(--navy);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 12px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--teal);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        
+        .btn:hover {
+            background-color: var(--navy);
+            transform: translateY(-2px);
+        }
+        
+        .document {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .document h2 {
+            color: var(--navy);
+            font-size: 28px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--teal);
+        }
+        
+        .document h3 {
+            color: var(--navy);
+            font-size: 22px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .document p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .document code {
+            background-color: #f1f1f1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 15px;
+        }
+        
+        .code-block {
+            background-color: #2d2d2d;
+            color: #f1f1f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted var(--teal);
+            cursor: help;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--navy);
+            color: var(--white);
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .steps {
+            list-style-type: none;
+            counter-reset: step-counter;
+        }
+        
+        .steps li {
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 25px;
+        }
+        
+        .steps li::before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: var(--teal);
+            color: var(--white);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        footer {
+            background-color: var(--navy);
+            color: var(--white);
+            padding: 20px 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links a {
+            color: var(--light-blue);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--teal);
+        }
+        
+        .copyright {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--teal);
+            color: var(--white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+            }
+            
+            .search-container {
+                margin: 20px 0;
+                width: 100%;
+                max-width: none;
+            }
+            
+            .doc-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .document {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <nav>
+    <header>
         <div class="container">
-            <div class="logo">Extensions</div>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/tos">Tos</a></li>
-                <li><a href="/aboutsite">About Site</a></li>
-                <li><a href="/aboutowner">About Owner</a></li>
-                <li><a href="/crxmethod" class="active">CRX Method</a></li>
-                <li><a href="/showcase">Showcase</a></li>
-                <li><a href="/linkleap">Link Leap</a></li>
-            </ul>
-        </div>
-    </nav>
-    
-    <header class="progress-header">
-        <div class="container">
-            <h1>CRX Method</h1>
-            <p>Download and validate Chrome extensions</p>
+            <nav class="navbar">
+                <a href="#" class="logo">Index<span>folio</span></a>
+                <div class="search-container">
+                    <input type="text" class="search-bar" placeholder="Search">
+                    <span class="search-shortcut">Ctrl+L</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#">Home</a>
+                    <a href="#">Guides</a>
+                    <a href="#">API</a>
+                    <a href="#">Glossary</a>
+                </div>
+            </nav>
         </div>
     </header>
-    
-    <section class="content-section">
-        <div class="floating-stars" id="stars"></div>
-        <div class="container">
-            <div class="crx-box">
-                <h2>Get Your Extension</h2>
-                
-                <div class="input-container">
-                    <input type="text" id="crxInput" placeholder="Enter chrome url or id">
+
+    <main class="container">
+        <section class="hero">
+            <h1>Welcome to Indexfolio</h1>
+            <p>Your comprehensive resource for coding documentation, terminology explanations, and programming guides</p>
+        </section>
+
+        <section class="doc-grid">
+            <div class="doc-card">
+                <div class="doc-header">
+                    <h3 class="doc-title">CRX Method Explained</h3>
+                    <div class="doc-type">Terminology</div>
                 </div>
-                
-                <div class="buttons-container">
-                    <button id="downloadBtn" class="primary-btn">Download Extension</button>
-                    <button id="validateBtn" class="secondary-btn">Detect If Its Valid</button>
+                <div class="doc-content">
+                    <p>Learn what CRX method means and how it's used in Chrome extension development.</p>
+                    <a href="/crxmethod" class="btn">Read More</a>
                 </div>
-                
-                <div class="scan-container" id="scanContainer">
-                    <div class="scan-animation">
-                        <div class="scan-line"></div>
-                    </div>
-                    <div class="scan-result" id="scanResult"></div>
+                <div class="doc-footer">
+                    <span class="doc-tag">Chrome Extensions</span>
+                    <span>5 min read</span>
                 </div>
             </div>
-        </div>
-    </section>
-    
+            
+            <div class="doc-card">
+                <div class="doc-header">
+                    <h3 class="doc-title">Getting Started with Coding</h3>
+                    <div class="doc-type">Beginner Guide</div>
+                </div>
+                <div class="doc-content">
+                    <p>A simple, easy-to-follow guide for beginners to learn coding fundamentals.</p>
+                    <a href="/coding-basics" class="btn">Read More</a>
+                </div>
+                <div class="doc-footer">
+                    <span class="doc-tag">Basics</span>
+                    <span>10 min read</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="document" id="coding-basics">
+            <h2>Getting Started with Coding</h2>
+            
+            <p>Learning to code can seem challenging at first, but with the right approach, anyone can learn. This guide will help you take your first steps into programming.</p>
+            
+            <h3>What is Coding?</h3>
+            <p>Coding (or programming) is giving instructions to a computer to perform specific tasks. These instructions are written in programming languages that computers can understand.</p>
+            
+            <h3>Choosing Your First Language</h3>
+            <p>For beginners, these languages are often recommended:</p>
+            <ul>
+                <li><strong>HTML & CSS:</strong> Not true programming languages, but perfect for learning how websites are built</li>
+                <li><strong>JavaScript:</strong> Widely used for making websites interactive</li>
+                <li><strong>Python:</strong> Known for its simple, readable syntax</li>
+            </ul>
+            
+            <h3>Steps to Start Coding</h3>
+            <ol class="steps">
+                <li>
+                    <strong>Set a Goal</strong>
+                    <p>Decide what you want to build. Having a clear goal will keep you motivated.</p>
+                </li>
+                <li>
+                    <strong>Choose a Learning Resource</strong>
+                    <p>Find tutorials, courses, or books that match your learning style.</p>
+                </li>
+                <li>
+                    <strong>Set Up Your Coding Environment</strong>
+                    <p>Install the necessary software. For beginners, simple text editors or online platforms like Replit or CodePen are great.</p>
+                </li>
+                <li>
+                    <strong>Learn by Doing</strong>
+                    <p>Practice with small projects. Making mistakes and solving problems is the best way to learn.</p>
+                </li>
+                <li>
+                    <strong>Join a Community</strong>
+                    <p>Connect with other learners to share knowledge and stay motivated.</p>
+                </li>
+            </ol>
+            
+            <h3>Your First Code</h3>
+            <p>Here's a simple HTML code to create a "Hello World" webpage:</p>
+            
+            <div class="code-block">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;My First Webpage&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Hello, World!&lt;/h1&gt;
+    &lt;p&gt;This is my first webpage.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+            </div>
+            
+            <p>Save this code in a file named <code>index.html</code> and open it in a web browser to see your first creation!</p>
+        </section>
+    </main>
+
     <footer>
         <div class="container">
-            <p>© 2025 <span>Useful Chrome Extensions</span>. Made by Smart Script Studios.</p>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Use</a>
+                </div>
+                <p class="copyright">Developed by Smart Script Studios</p>
+            </div>
         </div>
     </footer>
-    
-    <script src="script.js"></script>
+
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+
+    <script>
+        // Search functionality
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'l') {
+                e.preventDefault();
+                document.querySelector('.search-bar').focus();
+            }
+        });
+
+        const searchBar = document.querySelector('.search-bar');
+        searchBar.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const documents = document.querySelectorAll('.document');
+            
+            documents.forEach(doc => {
+                const content = doc.textContent.toLowerCase();
+                if (content.includes(searchTerm)) {
+                    doc.style.display = 'block';
+                } else {
+                    doc.style.display = 'none';
+                }
+            });
+            
+            // Reset display if search is empty
+            if (searchTerm === '') {
+                documents.forEach(doc => {
+                    doc.style.display = 'block';
+                });
+            }
+        });
+        
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
 </body>
 </html>
