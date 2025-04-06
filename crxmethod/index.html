@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRX Method Explained - Indexfolio</title>
+    <style>
+        :root {
+            --navy: #1A365D;
+            --teal: #2A9D8F;
+            --light-gray: #F7F7F7;
+            --charcoal: #333333;
+            --white: #FFFFFF;
+            --orange: #F4A261;
+            --light-blue: #A8DADC;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-gray);
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: var(--navy);
+            color: var(--white);
+            padding: 20px 0;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo span {
+            color: var(--teal);
+        }
+        
+        .search-container {
+            flex-grow: 1;
+            max-width: 600px;
+            margin: 0 20px;
+            position: relative;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: none;
+            background-color: var(--white);
+            font-size: 16px;
+            color: var(--charcoal);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .search-bar:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.3);
+        }
+        
+        .search-shortcut {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--light-blue);
+            color: var(--navy);
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--teal);
+        }
+        
+        main {
+            padding: 40px 0;
+        }
+        
+        .document {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .document h1 {
+            color: var(--navy);
+            font-size: 36px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--teal);
+        }
+        
+        .document-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .document-tag {
+            background-color: var(--light-blue);
+            color: var(--navy);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .document-metadata {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--charcoal);
+            opacity: 0.8;
+        }
+        
+        .document h2 {
+            color: var(--navy);
+            font-size: 28px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        
+        .document h3 {
+            color: var(--navy);
+            font-size: 22px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .document p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .document ul, .document ol {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+        
+        .document li {
+            margin-bottom: 10px;
+        }
+        
+        .document code {
+            background-color: #f1f1f1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 15px;
+        }
+        
+        .code-block {
+            background-color: #2d2d2d;
+            color: #f1f1f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        .tip-box {
+            background-color: var(--light-blue);
+            border-left: 4px solid var(--teal);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .warning-box {
+            background-color: #FFEDD5;
+            border-left: 4px solid var(--orange);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .image-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .image-container img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .image-caption {
+            font-size: 14px;
+            color: var(--charcoal);
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: var(--light-blue);
+            color: var(--navy);
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .related-articles {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .related-articles h3 {
+            margin-bottom: 20px;
+        }
+        
+        .article-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .article-card {
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .article-card h4 {
+            color: var(--navy);
+            margin-bottom: 10px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--teal);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        
+        .btn:hover {
+            background-color: var(--navy);
+            transform: translateY(-2px);
+        }
+        
+        footer {
+            background-color: var(--navy);
+            color: var(--white);
+            padding: 20px 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links a {
+            color: var(--light-blue);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--teal);
+        }
+        
+        .copyright {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--teal);
+            color: var(--white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+            }
+            
+            .search-container {
+                margin: 20px 0;
+                width: 100%;
+                max-width: none;
+            }
+            
+            .document {
+                padding: 20px;
+            }
+            
+            .document-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .document-metadata {
+                margin-top: 10px;
+            }
+            
+            .article-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="#" class="logo">Index<span>folio</span></a>
+                <div class="search-container">
+                    <input type="text" class="search-bar" placeholder="Search">
+                    <span class="search-shortcut">Ctrl+L</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#">Home</a>
+                    <a href="#">Guides</a>
+                    <a href="#">API</a>
+                    <a href="#">Glossary</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="document">
+            <div class="document-header">
+                <div>
+                    <span class="document-tag">Chrome Extensions</span>
+                    <h1>CRX Method Explained</h1>
+                </div>
+                <div class="document-metadata">
+                    <span>Last updated: April 2, 2025</span>
+                    <span>5 min read</span>
+                </div>
+            </div>
+            
+            <p>The CRX method is fundamental to Chrome extension development. This guide explains what it is, how it works, and why it's important for developers creating extensions for the Chrome browser.</p>
+            
+            <h2>What is the CRX Method?</h2>
+            <p>CRX refers to Chrome Extension, which is both a file format (with the .crx extension) and a development methodology used to create browser extensions for Google Chrome and other Chromium-based browsers like Microsoft Edge, Brave, and Opera.</p>
+            
+            <div class="tip-box">
+                <strong>Definition:</strong> A CRX file is essentially a packaged Chrome extension that contains all the necessary code, resources, and manifest information required for the extension to function within the browser.
+            </div>
+            
+            <h2>Components of a CRX Extension</h2>
+            <p>A Chrome extension built using the CRX method typically consists of the following components:</p>
+            
+            <h3>1. Manifest File</h3>
+            <p>The manifest.json file is the heart of any Chrome extension. It contains metadata about the extension and defines its capabilities and permissions.</p>
+            
+            <div class="code-block">
+{
+  "manifest_version": 3,
+  "name": "My First Extension",
+  "version": "1.0",
+  "description": "A simple Chrome extension",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/icon16.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+    }
+  },
+  "permissions": ["activeTab", "storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.example.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
+            </div>
+            
+            <h3>2. Background Scripts</h3>
+            <p>Background scripts run in the extension's background and handle events like browser actions, tab updates, etc.</p>
+            
+            <div class="code-block">
+// background.js
+chrome.action.onClicked.addListener((tab) => {
+  chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    function: () => {
+      alert('Hello from my extension!');
+    }
+  });
+});
+            </div>
+            
+            <h3>3. Content Scripts</h3>
+            <p>Content scripts run in the context of web pages and can interact with their DOM.</p>
+            
+            <div class="code-block">
+// content.js
+document.body.style.backgroundColor = 'lightblue';
+console.log('Page modified by CRX extension');
+            </div>
+            
+            <h3>4. Popup Pages</h3>
+            <p>HTML pages that display when users click on the extension icon in the toolbar.</p>
+            
+            <div class="image-container">
+                <img src="/api/placeholder/600/300" alt="Chrome Extension Popup Example">
+                <p class="image-caption">Example of a Chrome extension popup interface</p>
+            </div>
+            
+            <h2>How the CRX Method Works</h2>
+            
+            <h3>Development Process</h3>
+            <ol>
+                <li><strong>Create Project Structure</strong>: Organize files according to Chrome extension standards</li>
+                <li><strong>Develop Core Files</strong>: Create manifest.json and implement functionality</li>
+                <li><strong>Test Locally</strong>: Load the unpacked extension in Chrome's developer mode</li>
+                <li><strong>Package as CRX</strong>: Create a distributable .crx file</li>
+                <li><strong>Publish</strong>: Submit to the Chrome Web Store</li>
+            </ol>
+            
+            <h3>CRX Packaging</h3>
+            <p>The CRX file format is essentially a ZIP archive with a special header that contains the extension's signature. This signature is used to verify the extension's integrity and authenticity.</p>
+            
+            <div class="warning-box">
+                <strong>Important:</strong> As of 2024, Google Chrome restricts the installation of extensions to those from the Chrome Web Store. Direct .crx file installations are only allowed in developer mode or through enterprise policies.
+            </div>
+            
+            <h2>CRX vs. Other Extension Methods</h2>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Chrome CRX</th>
+                            <th>Firefox XPI</th>
+                            <th>Safari App Extension</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Primary Format</td>
+                            <td>.crx</td>
+                            <td>.xpi</td>
+                            <td>.appex</td>
+                        </tr>
+                        <tr>
+                            <td>Manifest Version</td>
+                            <td>Manifest V3</td>
+                            <td>Manifest V2/V3</td>
+                            <td>N/A (Uses Info.plist)</td>
+                        </tr>
+                        <tr>
+                            <td>Browser Support</td>
+                            <td>Chrome, Edge, Opera, Brave</td>
+                            <td>Firefox, Thunderbird</td>
+                            <td>Safari only</td>
+                        </tr>
+                        <tr>
+                            <td>Development Complexity</td>
+                            <td>Medium</td>
+                            <td>Medium</td>
+                            <td>High</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h2>Best Practices for CRX Development</h2>
+            
+            <ul>
+                <li><strong>Follow Manifest V3 Guidelines</strong>: Google is phasing out Manifest V2, so new extensions should use V3</li>
+                <li><strong>Minimize Permissions</strong>: Request only the permissions your extension actually needs</li>
+                <li><strong>Optimize Performance</strong>: Keep background scripts lightweight and event-driven</li>
+                <li><strong>Security First</strong>: Sanitize inputs, avoid arbitrary code execution, and follow CSP guidelines</li>
+                <li><strong>Progressive Enhancement</strong>: Design your extension to degrade gracefully when features aren't available</li>
+            </ul>
+            
+            <h2>Tools for CRX Development</h2>
+            
+            <p>Several tools can streamline the development process:</p>
+            
+            <ul>
+                <li><strong>Chrome Extensions CLI</strong>: Command-line tools for scaffolding and building extensions</li>
+                <li><strong>Extension Reloader</strong>: Tools to reload extensions during development without manual intervention</li>
+                <li><strong>CRX Extractor</strong>: Utility to unpack .crx files for inspection or modification</li>
+                <li><strong>Chrome Extensions Developer Mode</strong>: Built-in browser tools for testing unpacked extensions</li>
+            </ul>
+            
+            <div class="related-articles">
+                <h3>Related Articles</h3>
+                <div class="article-grid">
+                    <div class="article-card">
+                        <h4>Getting Started with Chrome Extensions</h4>
+                        <p>Learn the basics of creating your first Chrome extension from scratch.</p>
+                        <a href="#" class="btn">Read More</a>
+                    </div>
+                    <div class="article-card">
+                        <h4>Migrating from Manifest V2 to V3</h4>
+                        <p>Step-by-step guide to updating your extensions to the latest manifest version.</p>
+                        <a href="#" class="btn">Read More</a>
+                    </div>
+                    <div class="article-card">
+                        <h4>Chrome Extension Security Best Practices</h4>
+                        <p>Keep your extensions secure with these essential security techniques.</p>
+                        <a href="#" class="btn">Read More</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Use</a>
+                </div>
+                <p class="copyright">Developed by Smart Script Studios</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+
+    <script>
+        // Search functionality
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'l') {
+                e.preventDefault();
+                document.querySelector('.search-bar').focus();
+            }
+        });
+
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
